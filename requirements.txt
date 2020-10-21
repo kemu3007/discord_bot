@@ -1,0 +1,6 @@
+djangorestframework
+django<3.0
+requests
+discord.py
+django-environ
+gunicorn
