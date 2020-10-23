@@ -1,7 +1,10 @@
 import datetime
+import json
 
 import requests
 from django.utils import timezone
+from linebot import LineBotApi, WebhookHandler
+from linebot.models import TextSendMessage
 from pyquery import PyQuery
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -42,6 +45,16 @@ class HoloduleView(APIView):
     def get(self, request):
         response = PyQuery(self.holodule_url)
         return Response({"message": self.prepare_data(response)})
+
+
+class LINEHoloduleView(HoloduleView):
+    line_bot_api = LineBotApi(env.str("LINE_TOKEN"))
+    handler = WebhookHandler(env.str("CHANNEL_SECRETS"))
+
+    def post(self, request):
+        response = PyQuery(self.holodule_url)
+        event = json.loads(request.body.decode("utf-8"))["event"]
+        return self.line_bot_api.reply_message(event["replyToken"], TextSendMessage(text=self.prepare_data(response)))
 
 
 class OhayouViewSets(ModelViewSet):

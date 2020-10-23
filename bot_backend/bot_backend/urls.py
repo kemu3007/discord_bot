@@ -27,6 +27,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/", include(router.urls)),
     path("api/v1/holodule/", bot_views.HoloduleView().as_view()),
+    path("api/v1/holodule/line/", bot_views.LINEHoloduleView().as_view()),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
