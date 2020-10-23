@@ -14,11 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-
 
 import bot.views as bot_views
 
@@ -26,8 +24,9 @@ router = DefaultRouter()
 router.register("ohayou", bot_views.OhayouViewSets)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
     path("api/v1/", include(router.urls)),
+    path("api/v1/holodule/", bot_views.HoloduleView().as_view()),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

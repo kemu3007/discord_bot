@@ -1,21 +1,29 @@
-import discord
+import os
+
 import requests
-from .env import BASE_URL, TOKEN
+from dotenv import load_dotenv
 
+import discord
 
-base_url = BASE_URL
+load_dotenv()
+
+base_url = os.getenv("BASE_URL")
+
 
 class MyClient(discord.Client):
     async def on_ready(self):
-        print('waiting message...')
+        print("waiting message...")
 
     async def on_message(self, message):
         try:
             message_list = message.content.split()
             if message.author.bot or len(message_list) == 0:
                 return
-            if message_list[0] == '$ohayou_list':
-                response = requests.get(url=f"{base_url}/ohayou/", headers={"content-type": "application/json"})
+            if message_list[0] == "$ohayou_list":
+                response = requests.get(
+                    url=f"{base_url}/ohayou/",
+                    headers={"content-type": "application/json"},
+                )
                 reply = ""
                 if response.status_code == 200:
                     for ohayo in response.json():
@@ -23,28 +31,51 @@ class MyClient(discord.Client):
                     return await message.channel.send(reply)
                 else:
                     raise SyntaxError
-            elif message_list[0] == '$ohayou_add':
-                response = requests.post(url=f"{base_url}/ohayou/", data={"text": message.content.strip("$ohayou_add")})
+            elif message_list[0] == "$ohayou_add":
+                response = requests.post(
+                    url=f"{base_url}/ohayou/",
+                    data={"text": message.content.strip("$ohayou_add")},
+                )
                 if response.status_code == 200:
-                    return await message.channel.send(f"{message.content.strip('$ohayou_add')} をあいさつに追加しました")
+                    return await message.channel.send(
+                        f"{message.content.strip('$ohayou_add')} をあいさつに追加しました"
+                    )
                 else:
                     raise SyntaxError
-            elif message_list[0] == '$ohayou_delete':
+            elif message_list[0] == "$ohayou_delete":
                 if len(message_list) >= 2:
-                    response = requests.delete(url=f"{base_url}/ohayou/{message_list[1]}/")
+                    response = requests.delete(
+                        url=f"{base_url}/ohayou/{message_list[1]}/"
+                    )
                     if response.status_code == 204:
-                        return await message.channel.send(f"pk: {message_list[1]} のあいさつを削除しました")
+                        return await message.channel.send(
+                            f"pk: {message_list[1]} のあいさつを削除しました"
+                        )
                     elif response.status_code == 404:
-                        return await message.channel.send(f"pk: {message_list[1]} のあいさつは存在しません")
+                        return await message.channel.send(
+                            f"pk: {message_list[1]} のあいさつは存在しません"
+                        )
                 else:
                     return await message.channel.send(f"IDを指定してください")
-            elif 'おはよう' in message.content:
-                response = requests.get(url=f"{base_url}/ohayou/generate/", headers={"content-type": "application/json"})
+            elif message_list[0] == "$holodule":
+                response = requests.get(url=f"{base_url}/holodule/")
+                if response.status_code == 200:
+                    print(len(response.json()["message"]))
+                    return await message.channel.send(response.json()["message"])
+                raise SyntaxError
+            elif "おはよう" in message.content:
+                response = requests.get(
+                    url=f"{base_url}/ohayou/generate/",
+                    headers={"content-type": "application/json"},
+                )
                 if response.status_code == 200:
                     return await message.channel.send(response.json()["message"])
                 raise SyntaxError
         except Exception as e:
-            return await message.channel.send(f"エラーが発生しました、管理者に問い合わせてください \n detail: {e}")
+            return await message.channel.send(
+                f"エラーが発生しました、管理者に問い合わせてください \n detail: {e}"
+            )
+
 
 client = MyClient()
-client.run(TOKEN)
+client.run(os.getenv("TOKEN"))
