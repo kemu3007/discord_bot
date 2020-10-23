@@ -37,24 +37,16 @@ class MyClient(discord.Client):
                     data={"text": message.content.strip("$ohayou_add")},
                 )
                 if response.status_code == 200:
-                    return await message.channel.send(
-                        f"{message.content.strip('$ohayou_add')} をあいさつに追加しました"
-                    )
+                    return await message.channel.send(f"{message.content.strip('$ohayou_add')} をあいさつに追加しました")
                 else:
                     raise SyntaxError
             elif message_list[0] == "$ohayou_delete":
                 if len(message_list) >= 2:
-                    response = requests.delete(
-                        url=f"{base_url}/ohayou/{message_list[1]}/"
-                    )
+                    response = requests.delete(url=f"{base_url}/ohayou/{message_list[1]}/")
                     if response.status_code == 204:
-                        return await message.channel.send(
-                            f"pk: {message_list[1]} のあいさつを削除しました"
-                        )
+                        return await message.channel.send(f"pk: {message_list[1]} のあいさつを削除しました")
                     elif response.status_code == 404:
-                        return await message.channel.send(
-                            f"pk: {message_list[1]} のあいさつは存在しません"
-                        )
+                        return await message.channel.send(f"pk: {message_list[1]} のあいさつは存在しません")
                 else:
                     return await message.channel.send(f"IDを指定してください")
             elif message_list[0] == "$holodule":
@@ -72,9 +64,7 @@ class MyClient(discord.Client):
                     return await message.channel.send(response.json()["message"])
                 raise SyntaxError
         except Exception as e:
-            return await message.channel.send(
-                f"エラーが発生しました、管理者に問い合わせてください \n detail: {e}"
-            )
+            return await message.channel.send(f"エラーが発生しました、管理者に問い合わせてください \n detail: {e}")
 
 
 client = MyClient()

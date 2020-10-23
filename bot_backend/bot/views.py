@@ -21,35 +21,21 @@ class HoloduleView(APIView):
     holodule_url = "https://schedule.hololive.tv/simple/hololive"
 
     def prepare_data(self, response: PyQuery):
-        stream_urls = [
-            PyQuery(a).attr("href")
-            for a in response("a")
-            if "youtube" in PyQuery(a).attr("href")
-        ]
-        video_info = [
-            PyQuery(a).text()
-            for a in response("a")
-            if "youtube" in PyQuery(a).attr("href")
-        ]
-        video_ids = [
-            url.replace("https://www.youtube.com/watch?v=", "") for url in stream_urls
-        ]
-        youtube_responses = requests.get(
-            self.youtube_api_url.format(",".join(video_ids), env.str("API_KEY"))
-        )
-        youtube_dict = {
-            response["id"]: response for response in youtube_responses.json()["items"]
-        }
+        stream_urls = [PyQuery(a).attr("href") for a in response("a") if "youtube" in PyQuery(a).attr("href")]
+        video_info = [PyQuery(a).text() for a in response("a") if "youtube" in PyQuery(a).attr("href")]
+        video_ids = [url.replace("https://www.youtube.com/watch?v=", "") for url in stream_urls]
+        youtube_responses = requests.get(self.youtube_api_url.format(",".join(video_ids), env.str("API_KEY")))
+        youtube_dict = {response["id"]: response for response in youtube_responses.json()["items"]}
         message = ""
         for index, video_id in enumerate(video_ids):
             if "liveStreamingDetails" in youtube_dict[video_id]:
                 if datetime.datetime.now() < datetime.datetime.strptime(
-                    youtube_dict[video_id]["liveStreamingDetails"][
-                        "scheduledStartTime"
-                    ],
+                    youtube_dict[video_id]["liveStreamingDetails"]["scheduledStartTime"],
                     "%Y-%m-%dT%H:%M:%SZ",
                 ):
-                    message += f"{video_info[index]} {youtube_dict[video_id]['snippet']['title']} ({stream_urls[index]}) \n"
+                    message += (
+                        f"{video_info[index]} {youtube_dict[video_id]['snippet']['title']} ({stream_urls[index]}) \n"
+                    )
         return message
 
     def get(self, request):
@@ -67,9 +53,7 @@ class OhayouViewSets(ModelViewSet):
         if Ohayou.objects.filter(text=serializer.validated_data["text"]).exists():
             return Response({"message": "既に存在しているレスポンスです"})
         Ohayou.objects.create(text=serializer.validated_data["text"])
-        return Response(
-            {"message": f"{serializer.validated_data['text']} をあいさつレスポンスに追加しました"}
-        )
+        return Response({"message": f"{serializer.validated_data['text']} をあいさつレスポンスに追加しました"})
 
     @action(methods=["get"], detail=False)
     def generate(self, request):

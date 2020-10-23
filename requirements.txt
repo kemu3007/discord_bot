@@ -1,5 +1,5 @@
 djangorestframework
-django<3.0
+django
 requests
 discord.py
 django-environ
