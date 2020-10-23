@@ -4,3 +4,5 @@ requests
 discord.py
 django-environ
 gunicorn
+pyquery
+python-dotenv
