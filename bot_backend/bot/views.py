@@ -1,6 +1,7 @@
 import datetime
 
 import requests
+from django.utils import timezone
 from pyquery import PyQuery
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -28,10 +29,10 @@ class HoloduleView(APIView):
         youtube_dict = {response["id"]: response for response in youtube_responses.json()["items"]}
         message = ""
         for index, video_id in enumerate(video_ids):
-            if "liveStreamingDetails" in youtube_dict[video_id]:
-                if datetime.datetime.now() < datetime.datetime.strptime(
+            if video_id in youtube_dict and "liveStreamingDetails" in youtube_dict[video_id]:
+                if timezone.now() < datetime.datetime.strptime(
                     youtube_dict[video_id]["liveStreamingDetails"]["scheduledStartTime"],
-                    "%Y-%m-%dT%H:%M:%SZ",
+                    "%Y-%m-%dT%H:%M:%S%z",
                 ):
                     message += (
                         f"{video_info[index]} {youtube_dict[video_id]['snippet']['title']} ({stream_urls[index]}) \n"
