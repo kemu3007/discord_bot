@@ -6,3 +6,4 @@ django-environ
 gunicorn
 pyquery
 python-dotenv
+line-bot-sdk

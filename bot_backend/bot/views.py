@@ -28,6 +28,7 @@ class HoloduleView(APIView):
         stream_urls = [PyQuery(a).attr("href") for a in response("a") if "youtube" in PyQuery(a).attr("href")]
         video_info = [PyQuery(a).text() for a in response("a") if "youtube" in PyQuery(a).attr("href")]
         video_ids = [url.replace("https://www.youtube.com/watch?v=", "") for url in stream_urls]
+        video_ids = video_ids[len(video_ids) - 50 :]
         youtube_responses = requests.get(self.youtube_api_url.format(",".join(video_ids), env.str("API_KEY")))
         youtube_dict = {response["id"]: response for response in youtube_responses.json()["items"]}
         message = ""
