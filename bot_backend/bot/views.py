@@ -28,13 +28,14 @@ class HoloduleView(APIView):
         stream_urls = [PyQuery(a).attr("href") for a in response("a") if "youtube" in PyQuery(a).attr("href")]
         video_info = [PyQuery(a).text() for a in response("a") if "youtube" in PyQuery(a).attr("href")]
         video_ids = [url.replace("https://www.youtube.com/watch?v=", "") for url in stream_urls]
-        video_ids = video_ids[len(video_ids) - 50 :]
-        youtube_responses = requests.get(self.youtube_api_url.format(",".join(video_ids), env.str("API_KEY")))
+        youtube_responses = requests.get(
+            self.youtube_api_url.format(",".join(video_ids[len(video_ids) - 50 :]), env.str("API_KEY"))
+        )
         youtube_dict = {response["id"]: response for response in youtube_responses.json()["items"]}
         message = ""
         for index, video_id in enumerate(video_ids):
             if video_id in youtube_dict and "liveStreamingDetails" in youtube_dict[video_id]:
-                if timezone.now() < datetime.datetime.strptime(
+                if timezone.now() - timezone.timedelta(hours=1) < datetime.datetime.strptime(
                     youtube_dict[video_id]["liveStreamingDetails"]["scheduledStartTime"],
                     "%Y-%m-%dT%H:%M:%S%z",
                 ):
