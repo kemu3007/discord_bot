@@ -52,8 +52,8 @@ class MyClient(discord.Client):
             elif message_list[0] == "$holodule":
                 response = requests.get(url=f"{base_url}/holodule/")
                 if response.status_code == 200:
-                    print(len(response.json()["message"]))
-                    return await message.channel.send(response.json()["message"])
+                    embed = discord.Embed(title="ほろじゅーる", description=response.json()["message"])
+                    return await message.channel.send(embed=embed)
                 raise SyntaxError
             elif "おはよう" in message.content:
                 response = requests.get(
