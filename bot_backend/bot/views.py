@@ -36,12 +36,13 @@ class HoloduleView(APIView):
         for index, video_id in enumerate(video_ids):
             if video_id in youtube_dict and "liveStreamingDetails" in youtube_dict[video_id]:
                 if timezone.now() - timezone.timedelta(hours=1) < datetime.datetime.strptime(
-                    youtube_dict[video_id]["liveStreamingDetails"]["scheduledStartTime"],
-                    "%Y-%m-%dT%H:%M:%S%z",
+                    youtube_dict[video_id]["liveStreamingDetails"]["scheduledStartTime"], "%Y-%m-%dT%H:%M:%S%z"
                 ):
-                    message += (
-                        f"{video_info[index]} {youtube_dict[video_id]['snippet']['title']} ({stream_urls[index]}) \n"
+                    append_message = (
+                        f"{video_info[index]} [{youtube_dict[video_id]['snippet']['title']}]({stream_urls[index]}) \n"
                     )
+                    if len(message) + len(append_message) < 2000:
+                        message += append_message
         return message
 
     def get(self, request):
