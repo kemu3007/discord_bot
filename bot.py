@@ -65,6 +65,8 @@ class MyClient(discord.Client):
                 raise SyntaxError
             elif "すいちゃんは" in message.content:
                 return await message.channel.send("今日もかわいい～～～")
+            elif "猫やんけ" in message.content:
+                return await message.channel.send("狐じゃい！！！！")
         except Exception as e:
             return await message.channel.send(f"エラーが発生しました、管理者に問い合わせてください \n detail: {e}")
 
