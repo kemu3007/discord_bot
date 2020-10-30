@@ -92,9 +92,9 @@ class MyClient(discord.Client):
             return await message.channel.send(f"エラーが発生しました、管理者に問い合わせてください \n detail: {e}")
 
 
-@tasks.loop(minutes=60)
+@tasks.loop(seconds=60)
 async def remind_holodule():
-    if datetime.now(JST).hour == 16:
+    if datetime.now(JST).hour == 16 and datetime.now(JST).minute == 0:
         response = requests.get(url=f"{base_url}/holodule_reminder/")
         if response.status_code == 200:
             channels = [channel_info["channel_code"] for channel_info in response.json()]
