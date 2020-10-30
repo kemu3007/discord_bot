@@ -63,6 +63,8 @@ class MyClient(discord.Client):
                 if response.status_code == 200:
                     return await message.channel.send(response.json()["message"])
                 raise SyntaxError
+            elif "すいちゃんは" in message.content:
+                return await message.channel.send("今日もかわいい～～～")
         except Exception as e:
             return await message.channel.send(f"エラーが発生しました、管理者に問い合わせてください \n detail: {e}")
 
