@@ -22,6 +22,7 @@ import bot.views as bot_views
 
 router = DefaultRouter()
 router.register("ohayou", bot_views.OhayouViewSets)
+router.register("holodule_reminder", bot_views.HoloduleReminderViewSets)
 
 urlpatterns = [
     path("admin/", admin.site.urls),

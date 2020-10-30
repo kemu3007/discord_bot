@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from bot.models import Ohayou
+from bot.models import HoloduleReminder, Ohayou
 
 
 class OhayouSerializer(serializers.ModelSerializer):
@@ -8,3 +8,9 @@ class OhayouSerializer(serializers.ModelSerializer):
         model = Ohayou
         read_only_fields = ["id"]
         fields = ["id", "text"]
+
+
+class HoloduleReminderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HoloduleReminder
+        fields = ["channel_code", "channel_name"]

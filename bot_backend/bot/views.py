@@ -6,15 +6,16 @@ from django.utils import timezone
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import TextSendMessage
 from pyquery import PyQuery
+from requests.api import request
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from bot.serializers import OhayouSerializer
+from bot.serializers import HoloduleReminderSerializer, OhayouSerializer
 from bot_backend.env import env
 
-from .models import Ohayou
+from .models import HoloduleReminder, Ohayou
 
 
 class HoloduleView(APIView):
@@ -76,3 +77,23 @@ class OhayouViewSets(ModelViewSet):
     def generate(self, request):
         obj = Ohayou.objects.all().order_by("?").first()
         return Response({"message": obj.text})
+
+
+class HoloduleReminderViewSets(ModelViewSet):
+    queryset = HoloduleReminder.objects.all()
+    serializer_class = HoloduleReminderSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        channel_code = self.request.query_params.get("channel_code")
+        if channel_code:
+            qs = qs.filter(channel_code=channel_code)
+        return qs
+
+    def create(self, request):
+        super().create(request)
+        return Response({"message": "リマインダーを設定しました"})
+
+    def destroy(self, request, pk=None):
+        super().destroy(request, pk)
+        return Response({"message": "リマインダーを解除しました"})
