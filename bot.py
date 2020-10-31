@@ -104,7 +104,7 @@ async def remind_holodule():
                 for channel in channels:
                     channel = client.get_channel(int(channel))
                     if channel:
-                        return await channel.send(embed=embed)
+                        await channel.send(embed=embed)
 
 
 client = MyClient()
