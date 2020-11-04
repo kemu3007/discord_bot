@@ -1,4 +1,5 @@
 import os
+import random
 from datetime import datetime, timedelta, timezone
 
 import requests
@@ -88,6 +89,9 @@ class MyClient(discord.Client):
                 return await message.channel.send("今日もかわいい～～～")
             elif "猫やんけ" in message.content:
                 return await message.channel.send("狐じゃい！！！！")
+            elif "んな" in message.content:
+                res = "んな" + random.randrange(10) * "あ"
+                return await message.channel.send(res)
         except Exception as e:
             return await message.channel.send(f"エラーが発生しました、管理者に問い合わせてください \n detail: {e}")
 
